@@ -15,15 +15,16 @@ from importlib.metadata import distributions
 from inspect import getmodule, isclass
 
 import pluggy
+from requests.adapters import BaseAdapter
 from requests.auth import AuthBase
 
 from ..auxlib.ish import dals
 from ..base.context import context
 from ..core.solve import Solver
 from ..exceptions import CondaValueError, PluginError
-from . import solvers, subcommands, virtual_packages
+from . import solvers, subcommands, transport_adapters, virtual_packages
 from .hookspec import CondaSpecs, spec_name
-from .types import CondaSubcommand
+from .types import CondaSubcommand, CondaTransportAdapter
 
 log = logging.getLogger(__name__)
 
@@ -249,6 +250,12 @@ class CondaPluginManager(pluggy.PluginManager):
             for subcommand in self.get_hook_results("subcommands")
         }
 
+    def get_transport_adapters(self) -> dict[str, CondaTransportAdapter]:
+        return {
+            transport_adapter.name.lower(): transport_adapter
+            for transport_adapter in self.get_hook_results("transport_adapters")
+        }
+
 
 @functools.lru_cache(maxsize=None)  # FUTURE: Python 3.9+, replace w/ functools.cache
 def get_plugin_manager() -> CondaPluginManager:
@@ -259,7 +266,10 @@ def get_plugin_manager() -> CondaPluginManager:
     plugin_manager = CondaPluginManager()
     plugin_manager.add_hookspecs(CondaSpecs)
     plugin_manager.load_plugins(
-        solvers, *virtual_packages.plugins, *subcommands.plugins
+        solvers,
+        *virtual_packages.plugins,
+        *transport_adapters.plugins,
+        *subcommands.plugins,
     )
     plugin_manager.load_entrypoints(spec_name)
     return plugin_manager
