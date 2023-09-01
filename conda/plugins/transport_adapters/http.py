@@ -13,6 +13,7 @@ def conda_transport_adapters():
         backoff_factor=context.remote_backoff_factor,
         status_forcelist=[413, 429, 500, 503],
         raise_on_status=False,
+        respect_retry_after_header=False,
     )
     http_adapter = HTTPAdapter(max_retries=retry)
     yield CondaTransportAdapter(name="http", prefix="http://", adapter=http_adapter)
