@@ -15,7 +15,6 @@ from importlib.metadata import distributions
 from inspect import getmodule, isclass
 
 import pluggy
-from requests.adapters import BaseAdapter
 from requests.auth import AuthBase
 
 from ..auxlib.ish import dals
