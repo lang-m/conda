@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 """The default HTTP/HTTPS transport adapter plugins"""
 from ...base.context import context
-from ...gateways.connection import Retry, HTTPAdapter
+from ...gateways.connection import HTTPAdapter, Retry
 from .. import CondaTransportAdapter, hookimpl
 
 
