@@ -213,11 +213,10 @@ class CondaSpecs:
     @_hookspec
     def conda_transport_adapters(self) -> Iterable[CondaTransportAdapter]:
         """
-        Register a conda auth handler derived from the requests API.
+        Register a conda transport adapter derived from the requests API.
 
-        This plugin hook allows attaching requests auth handler subclasses,
-        e.g. when authenticating requests against individual channels hosted
-        at HTTP/HTTPS services.
+        This plugin hook allows attaching requests transport adapter subclasses,
+        e.g. when through which to requesting files from channels.
 
         **Example:**
 
@@ -225,24 +224,25 @@ class CondaSpecs:
 
             import os
             from conda import plugins
-            from requests.adapters import BaseAdapter
+            from requests.adapters import HTTPAdapter
 
 
-            class EnvironmentHeaderAuth(BaseAdapter):
-                def __init__(self, *args, **kwargs):
-                    self.username = os.environ["EXAMPLE_CONDA_AUTH_USERNAME"]
-                    self.password = os.environ["EXAMPLE_CONDA_AUTH_PASSWORD"]
+            class DebugHTTPAdapter(HTTPAdapter):
+                def send(self, request, *args, **kwargs):
+                    print(f"Requesting: {request.url}")
+                    response = super().send(request, *args, **kwargs)
+                    print(f"Response: {response}")
+                    return response
 
-                def __call__(self, request):
-                    request.headers["X-Username"] = self.username
-                    request.headers["X-Password"] = self.password
-                    return request
+                def close(self):
+                    print("Closing connection: {self}")
 
 
             @plugins.hookimpl
-            def conda_auth_handlers():
+            def conda_transport_adapters():
                 yield plugins.CondaTransportAdapter(
-                    prefix="http://",
-                    adapter=EnvironmentHeaderAuth,
+                    name="http-debug",
+                    prefix="http+debug://",
+                    adapter=DebugHTTPAdapter,
                 )
         """
