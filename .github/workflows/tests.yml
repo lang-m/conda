@@ -331,6 +331,7 @@ jobs:
         env:
           CONDA_SOLVER: classic
         with:
+          architecture: arm64
           activate-environment: conda-test-env
           miniconda-version: "latest"
           python-version: ${{ matrix.python-version }}
@@ -341,6 +342,7 @@ jobs:
         env:
           CONDA_SOLVER: classic
         with:
+          architecture: arm64
           activate-environment: conda-test-env
           miniforge-version: latest
           python-version: ${{ matrix.python-version }}
