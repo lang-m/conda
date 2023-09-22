@@ -331,9 +331,9 @@ jobs:
         env:
           CONDA_SOLVER: classic
         with:
-          architecture: arm64
+          installer-url: https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
           activate-environment: conda-test-env
-          miniconda-version: "latest"
+          miniconda-version: latest
           python-version: ${{ matrix.python-version }}
 
       - uses: conda-incubator/setup-miniconda@v2
@@ -345,6 +345,7 @@ jobs:
           architecture: arm64
           activate-environment: conda-test-env
           miniforge-version: latest
+          miniconda-version: latest
           python-version: ${{ matrix.python-version }}
 
       - name: Setup environment
