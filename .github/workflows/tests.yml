@@ -325,7 +325,7 @@ jobs:
           key:
             ${{ runner.os }}-${{ env.MINIO_RELEASE && env.MINIO_RELEASE || 'minio' }}}-${{ env.CACHE_NUMBER }}
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: jezdez/setup-miniconda@cirrus-fixes
         name: Setup miniconda for defaults
         if: matrix.default-channel == 'defaults'
         env:
@@ -335,7 +335,7 @@ jobs:
           activate-environment: conda-test-env
           python-version: ${{ matrix.python-version }}
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: jezdez/setup-miniconda@cirrus-fixes
         name: Setup miniconda for conda-forge
         if: matrix.default-channel == 'conda-forge'
         env:
